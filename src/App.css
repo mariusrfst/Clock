@@ -1,0 +1,90 @@
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Prevent scrollbars */
+  /* background-color: #f0f0f0; */ /* Background color is now set dynamically in App.tsx */
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: #333;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  position: relative; /* For positioning the settings button */
+  cursor: default; /* Change cursor to default as the whole app is clickable */
+  transition: background-color 0.3s ease; /* Smooth background color transition */
+}
+
+.settings-button,
+.focus-mode-button {
+  position: fixed;
+  right: 20px;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #333;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-button {
+  top: 20px;
+  z-index: 1000; /* Ensure settings button is above other elements like clock */
+}
+
+.focus-mode-button {
+  top: 70px; /* Positioned 50px below the settings button (20px top + 40px height + 10px gap) */
+  z-index: 999; /* Below settings menu, but above clock */
+}
+
+.settings-button:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: scale(1.1);
+}
+
+.settings-button.visible,
+.focus-mode-button.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Styles for when settings button is hidden (can be controlled by React state) */
+/* We'll use inline styles or conditional rendering in React for actual show/hide */
+
+.app-klock-progress-bar-container {
+  position: fixed; /* Fixed position relative to the viewport */
+  bottom: 20px; /* Distance from the bottom of the screen */
+  left: 50%;
+  transform: translateX(-50%); /* Center horizontally */
+  width: 90vw; /* Responsive width, e.g., 90% of viewport width */
+  max-width: 400px; /* Maximum width for larger screens */
+  height: 5px; /* Thickness of the progress bar */
+  background-color: rgba(128, 128, 128, 0.25); /* Light grey background for the track */
+  border-radius: 3px;
+  overflow: hidden; /* Ensures the inner bar respects border radius */
+  z-index: 500; /* Ensure it's visible but below settings menu */
+}
+
+.app-klock-progress-bar {
+  height: 100%;
+  /* background-color will be set via inline style (textColor from App.tsx) */
+  border-radius: 3px;
+  transition: width 0.2s linear; /* Smooth transition for progress */
+}

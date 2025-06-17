@@ -1,0 +1,254 @@
+.settings-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* background-color: rgba(0, 0, 0, 0.3); */ /* Removed semi-transparent background */
+  display: block; /* Changed from flex to allow absolute positioning of menu */
+  /* justify-content: center; */ /* Removed */
+  /* align-items: center; */ /* Removed */
+  z-index: 1000; /* Ensure it's on top */
+  /* backdrop-filter: blur(5px); */ /* Removed blur effect */
+  pointer-events: auto; /* Allow overlay to capture clicks to close the menu */
+}
+
+.settings-menu {
+  position: absolute; /* Position within the overlay - top/right will be set by JS */
+  /* top: 20px; */ /* Removed - now dynamic */
+  /* right: 20px; */ /* Removed - now dynamic */
+  background: white;
+  padding: 0; /* Padding will be on an inner container if drag handle is full width */
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  width: 320px;
+  max-width: 90%;
+  max-height: 80vh; /* Limit overall height, e.g., 80% of viewport height */
+  z-index: 1001; /* Above overlay */
+  pointer-events: auto; /* Capture mouse events for the menu itself */
+  color: #333;
+  display: flex; /* To make drag handle and content stack */
+  flex-direction: column; /* Stack drag handle on top of content */
+}
+
+.settings-menu-drag-handle {
+  width: 100%;
+  height: 20px; /* Height of the drag handle */
+  background-color: #f0f0f0; /* Light grey, adjust as needed */
+  cursor: grab;
+  border-top-left-radius: 10px; /* Match parent's border radius */
+  border-top-right-radius: 10px;
+  margin-bottom: 10px; /* Space between handle and content */
+}
+
+.settings-menu-drag-handle:active {
+  cursor: grabbing;
+}
+
+/* Add padding to a new inner content div if drag handle is used like this */
+.settings-menu-content {
+  padding: 0 25px 25px 25px; /* Original padding, but not at the top if handle is there */
+  overflow-y: auto; /* Enable vertical scrolling for this section */
+  flex-grow: 1; /* Allow content to take available space before scrolling */
+  /* Add a little padding at the bottom if scrollbar is visible to avoid overlap with close button */
+  padding-bottom: 35px; /* Increased to ensure close button is clear of scrollbar */
+}
+
+.settings-menu h2 {
+  margin-top: 0;
+  margin-bottom: 25px;
+  color: #2c3e50;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.settings-menu-content .setting-item {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.setting-item label {
+  font-size: 16px;
+  color: #555;
+}
+
+.setting-item input[type="color"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 40px;
+  height: 40px;
+  background-color: transparent;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 0; /* Remove default padding */
+}
+
+.setting-item input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+  border-radius: 7px; /* Match parent's border-radius */
+}
+
+.setting-item input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 7px;
+}
+
+.setting-item input[type="color"]::-moz-color-swatch {
+  border: none;
+  border-radius: 7px;
+}
+
+.setting-item select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: white;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  min-width: 150px; /* Ensure select has some width */
+  transition: border-color 0.2s ease;
+}
+
+.setting-item select:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.setting-item input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 150px; /* Or 100% if you want it to take full width of its container part */
+  height: 8px;
+  background: #ddd;
+  border-radius: 5px;
+  outline: none;
+  opacity: 0.7;
+  transition: opacity .2s;
+  cursor: pointer;
+}
+
+.setting-item input[type="range"]:hover {
+  opacity: 1;
+}
+
+.setting-item input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #3498db;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.setting-item input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #3498db;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none; /* Important for Firefox */
+}
+
+/* Klock Mode Toggle Switch Styles */
+/* Ensure setting items are within the content area if drag handle is added */
+.settings-menu-content .klock-mode-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px; /* Adjusted width */
+  height: 28px; /* Adjusted height */
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px; /* Adjusted thumb size */
+  width: 20px;  /* Adjusted thumb size */
+  left: 4px;    /* Adjusted thumb position */
+  bottom: 4px;  /* Adjusted thumb position */
+  background-color: white;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3; /* Blue when checked */
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  transform: translateX(22px); /* Adjusted transform distance */
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 28px; /* Adjusted for new height */
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.settings-menu-content .close-button {
+  display: block;
+  width: 100%;
+  padding: 12px 15px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  margin-top: 25px; /* Add some space above the close button */
+}
+
+.settings-menu .close-button:hover {
+  background-color: #2980b9;
+}
+
+.settings-menu .close-button:active {
+  transform: scale(0.98);
+}
+
+.settings-menu-attribution {
+  font-size: 0.8em;
+  color: #888;
+  text-align: center;
+  margin-top: 20px; /* Space above the attribution line */
+  padding-top: 10px; /* Some padding if there's a border or distinct section */
+  border-top: 1px solid #eee; /* Optional: a light separator line */
+}
