@@ -3,6 +3,7 @@ import './FlipClock.css';
 
 interface FlipClockCardProps {
   digit: string;
+  size: string; // Added size prop
 }
 
 const AnimatedCard: React.FC<{ animation: string; digit: string }> = ({ animation, digit }) => {
@@ -21,7 +22,7 @@ const StaticCard: React.FC<{ position: string; digit: string }> = ({ position, d
   );
 };
 
-const FlipClockCard: React.FC<FlipClockCardProps> = ({ digit }) => {
+const FlipClockCard: React.FC<FlipClockCardProps> = ({ digit, size }) => { // Added size to destructuring
   const [previousDigit, setPreviousDigit] = useState(digit);
   const [isFlipping, setIsFlipping] = useState(false);
 
@@ -39,7 +40,7 @@ const FlipClockCard: React.FC<FlipClockCardProps> = ({ digit }) => {
   }, [currentDigit, previousDigit]);
 
   return (
-    <div className="flip-unit-container">
+    <div className="flip-unit-container" style={{ fontSize: size }}> {/* Applied size prop */}
         <StaticCard position="upper-card" digit={currentDigit} />
         <StaticCard position="lower-card" digit={previousDigit} />
         {isFlipping && (

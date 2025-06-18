@@ -24,7 +24,8 @@ body {
 }
 
 .settings-button,
-.focus-mode-button {
+.focus-mode-button,
+.fullscreen-button {
   position: fixed;
   right: 20px;
   background-color: rgba(255, 255, 255, 0.9);
@@ -54,13 +55,20 @@ body {
   z-index: 999; /* Below settings menu, but above clock */
 }
 
+.fullscreen-button {
+  bottom: 20px;
+  right: 20px;
+  z-index: 999; /* Consistent with focus button */
+}
+
 .settings-button:hover {
   background: rgba(255, 255, 255, 1);
   transform: scale(1.1);
 }
 
 .settings-button.visible,
-.focus-mode-button.visible {
+.focus-mode-button.visible,
+.fullscreen-button.visible {
   opacity: 1;
   transform: translateY(0) scale(1);
 }

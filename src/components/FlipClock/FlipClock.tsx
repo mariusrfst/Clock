@@ -41,20 +41,20 @@ const FlipClock: React.FC<FlipClockProps> = ({ textColor, theme, size, isFocusMo
   return (
     <div className="flip-clock" style={{ color: textColor, fontSize: size }}>
       <div className="flip-clock-group">
-        <FlipClockCard digit={hours[0]} />
-        <FlipClockCard digit={hours[1]} />
+        <FlipClockCard digit={hours[0]} size={size} />
+        <FlipClockCard digit={hours[1]} size={size} />
       </div>
       <div className="flip-clock-separator">:</div>
       <div className="flip-clock-group">
-        <FlipClockCard digit={minutes[0]} />
-        <FlipClockCard digit={minutes[1]} />
+        <FlipClockCard digit={minutes[0]} size={size} />
+        <FlipClockCard digit={minutes[1]} size={size} />
       </div>
       {theme === 'flip' && (
         <>
           <div className="flip-clock-separator">:</div>
           <div className="flip-clock-group">
-            <FlipClockCard digit={seconds[0]} />
-            <FlipClockCard digit={seconds[1]} />
+            <FlipClockCard digit={seconds[0]} size={size} />
+            <FlipClockCard digit={seconds[1]} size={size} />
           </div>
         </>
       )}

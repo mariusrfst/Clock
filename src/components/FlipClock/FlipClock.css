@@ -44,7 +44,7 @@
   top: 0;
   border-top-left-radius: 0.1em;
   border-top-right-radius: 0.1em;
-  border-bottom: 1px solid #000;
+  border-bottom: 0.01em solid rgba(0,0,0,0.5); /* Changed to em and made slightly transparent */
 }
 
 .lower-card {

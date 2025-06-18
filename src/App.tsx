@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './App.css';
 import Clock from './components/Clock/Clock';
 import SettingsMenu from './components/SettingsMenu/SettingsMenu';
+import SupportModal from './components/SupportModal/SupportModal';
 import FlipClock from './components/FlipClock/FlipClock';
 
 function App() {
@@ -13,15 +14,17 @@ function App() {
   const [clockTextColor, setClockTextColor] = useState<string>('#333333');
   const [appBackgroundColor, setAppBackgroundColor] = useState<string>('#f0f0f0');
   const [clockFontFamily, setClockFontFamily] = useState<string>("-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif");
-  const [clockTextSize, setClockTextSize] = useState<string>('18vw');
+  const [clockTextSize, setClockTextSize] = useState<string>('10vw'); // Reduced from 18vw
   const [isKlockMode, setIsKlockMode] = useState<boolean>(false);
   const [clockPosition, setClockPosition] = useState<{ top: string; left: string }>({ top: '50%', left: '50%' });
   const [settingsMenuPosition, setSettingsMenuPosition] = useState<{ top: string; right: string }>({ top: '20px', right: '20px' });
   const [secondsProgress, setSecondsProgress] = useState(0);
   const [isFocusModeActive, setIsFocusModeActive] = useState<boolean>(false);
+  const [isSupportModalOpen, setIsSupportModalOpen] = useState(false); // Default to false, will be set by useEffect
   const [focusElapsedTimeInSeconds, setFocusElapsedTimeInSeconds] = useState<number>(0);
   const [isClockMovementModeActive, setIsClockMovementModeActive] = useState<boolean>(false);
   const [theme, setTheme] = useState<string>('default');
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(document.fullscreenElement != null); // Correct single initialization
 
   const handleAppClick = (event: React.MouseEvent<HTMLDivElement>) => {
     const targetElement = event.target as HTMLElement;
@@ -84,6 +87,55 @@ function App() {
     });
   };
 
+  // Single, corrected toggleFullscreen function
+  const toggleFullscreen = async () => {
+    if (!document.fullscreenElement) {
+      try {
+        await document.documentElement.requestFullscreen();
+        // setIsFullscreen(true); // State will be updated by the event listener
+      } catch (err: any) { // Typed error
+        console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+      }
+    } else {
+      if (document.exitFullscreen) {
+        try {
+          await document.exitFullscreen();
+          // setIsFullscreen(false); // State will be updated by the event listener
+        } catch (err: any) { // Typed error
+          console.error(`Error attempting to disable full-screen mode: ${err.message} (${err.name})`);
+        }
+      }
+    }
+  };
+
+  // Single, correctly placed handleFullscreenChange and its useEffect
+  const handleFullscreenChange = useCallback(() => {
+    setIsFullscreen(document.fullscreenElement != null);
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, [handleFullscreenChange]);
+
+  // Support Modal Logic
+  useEffect(() => {
+    const shouldShowModal = !document.cookie.includes('supportModalShownToday=true');
+    if (shouldShowModal) {
+      setIsSupportModalOpen(true);
+    }
+  }, []);
+
+  const handleCloseSupportModal = () => {
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + 1); // Expires in 1 day
+    document.cookie = `supportModalShownToday=true; expires=${expiryDate.toUTCString()}; path=/`;
+    setIsSupportModalOpen(false);
+  };
+
+  // Original useEffect for settingsButtonTimeoutRef cleanup
   useEffect(() => {
     return () => {
       if (settingsButtonTimeoutRef.current) {
@@ -178,6 +230,21 @@ function App() {
           ⏱️
         </button>
       )}
+      {/* Single, corrected fullscreen button JSX */}
+      {(showSettingsButton || isMenuOpen) && (
+        <button 
+          className={`fullscreen-button visible`}
+          onClick={(e) => { 
+            e.stopPropagation(); 
+            toggleFullscreen(); 
+          }}
+          title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+        >
+          {isFullscreen ? '↘️↙️' : '⛶'}
+        </button>
+      )}
+      <SupportModal isOpen={isSupportModalOpen} onClose={handleCloseSupportModal} />
+
       <SettingsMenu 
         isOpen={isMenuOpen} 
         onClose={toggleMenu}
