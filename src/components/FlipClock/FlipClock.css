@@ -1,0 +1,122 @@
+.flip-clock {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Helvetica Neue', sans-serif;
+  gap: 0.1em;
+}
+
+.flip-clock-group {
+  display: flex;
+  gap: 0.05em;
+}
+
+.flip-clock-separator {
+  font-size: 1em;
+  line-height: 1.5;
+}
+
+.flip-unit-container {
+  display: block;
+  position: relative;
+  width: 1em;
+  height: 1.5em;
+  perspective: 3em;
+  border-radius: 0.1em;
+  box-shadow: 0 0.1em 0.2em rgba(0,0,0,0.19), 0 0.06em 0.06em rgba(0,0,0,0.23);
+}
+
+.upper-card,
+.lower-card {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  width: 100%;
+  height: 50%;
+  overflow: hidden;
+  background: #333;
+  color: #f0f0f0;
+  font-size: 1em;
+}
+
+.upper-card {
+  align-items: flex-end;
+  top: 0;
+  border-top-left-radius: 0.1em;
+  border-top-right-radius: 0.1em;
+  border-bottom: 1px solid #000;
+}
+
+.lower-card {
+  align-items: flex-start;
+  bottom: 0;
+  border-bottom-left-radius: 0.1em;
+  border-bottom-right-radius: 0.1em;
+}
+
+.upper-card span,
+.lower-card span {
+  transform: translateY(50%);
+}
+
+.lower-card span {
+  transform: translateY(-50%);
+}
+
+.flip-card {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  overflow: hidden;
+  backface-visibility: hidden;
+  background: #333;
+  color: #f0f0f0;
+  font-size: 1em;
+}
+
+.flip-card.fold {
+  align-items: flex-end;
+  top: 0;
+  transform-origin: 50% 100%;
+  animation: fold 0.6s ease-in-out forwards;
+  border-top-left-radius: 0.1em;
+  border-top-right-radius: 0.1em;
+}
+
+.flip-card.unfold {
+  align-items: flex-start;
+  bottom: 0;
+  transform-origin: 50% 0%;
+  animation: unfold 0.6s ease-in-out forwards;
+  border-bottom-left-radius: 0.1em;
+  border-bottom-right-radius: 0.1em;
+}
+
+.flip-card.fold span {
+  transform: translateY(50%);
+}
+
+.flip-card.unfold span {
+  transform: translateY(-50%);
+}
+
+@keyframes fold {
+  0% {
+    transform: rotateX(0deg);
+  }
+  100% {
+    transform: rotateX(-90deg);
+  }
+}
+
+@keyframes unfold {
+  0% {
+    transform: rotateX(90deg);
+  }
+  100% {
+    transform: rotateX(0deg);
+  }
+}

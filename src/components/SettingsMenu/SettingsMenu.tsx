@@ -18,6 +18,8 @@ interface SettingsMenuProps {
   setMenuPosition: (position: { top: string; right: string }) => void;
   isClockMovementModeActive: boolean;
   setIsClockMovementModeActive: (isActive: boolean) => void;
+  theme: string;
+  onThemeChange: (theme: string) => void;
 }
 
 const SettingsMenu: React.FC<SettingsMenuProps> = ({
@@ -37,7 +39,10 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
   setMenuPosition,
   isClockMovementModeActive,
   setIsClockMovementModeActive,
+  theme,
+  onThemeChange,
 }) => {
+  const [currentView, setCurrentView] = useState<'main' | 'themes'>('main');
   const [isDragging, setIsDragging] = useState(false);
   const dragStartRef = useRef<{ x: number; y: number; initialTop: number; initialRight: number } | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -108,90 +113,106 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
       >
         <div className="settings-menu-drag-handle" onMouseDown={handleMouseDownOnDragHandle}></div>
         <div className="settings-menu-content">
-          <h2>Settings</h2>
-          <div className="setting-item">
-            <label htmlFor="clockTextColor">Clock Text Color:</label>
-            <input 
-              type="color" 
-              id="clockTextColor" 
-              value={clockTextColor} 
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => onClockTextColorChange(e.target.value)} 
-            />
+          {currentView === 'main' ? (
+            <div className="settings-menu-content">
+              <h2>Settings</h2>
+              <div className="setting-item">
+                <label htmlFor="clockTextColor">Clock Text Color:</label>
+                <input 
+                  type="color" 
+                  id="clockTextColor" 
+                  value={clockTextColor} 
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => onClockTextColorChange(e.target.value)} 
+                />
+              </div>
+
+              <div className="setting-item">
+                <label htmlFor="appBackgroundColor">Background Color:</label>
+                <input 
+                  type="color" 
+                  id="appBackgroundColor" 
+                  value={appBackgroundColor} 
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => onAppBackgroundColorChange(e.target.value)} 
+                />
+              </div>
+
+              {theme === 'default' && (
+                <>
+                  <div className="setting-item">
+                    <label htmlFor="fontFamily">Clock Font:</label>
+                    <select 
+                      id="fontFamily" 
+                      value={clockFontFamily} 
+                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) => onClockFontFamilyChange(e.target.value)}
+                    >
+                      <option value="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif">System Default</option>
+                      <option value="Arial, Helvetica, sans-serif">Arial</option>
+                      <option value="Verdana, Geneva, sans-serif">Verdana</option>
+                      <option value="'Times New Roman', Times, serif">Times New Roman</option>
+                      <option value="'Courier New', Courier, monospace">Courier New</option>
+                      <option value="Georgia, serif">Georgia</option>
+                    </select>
+                  </div>
+                  <div className="setting-item move-text-mode-toggle">
+                    <label htmlFor="moveTextMode">Move Text Mode</label>
+                    <label className="switch">
+                      <input 
+                        id="moveTextMode" 
+                        type="checkbox" 
+                        checked={isClockMovementModeActive} 
+                        onChange={(e) => setIsClockMovementModeActive(e.target.checked)} 
+                      />
+                      <span className="slider round"></span>
+                    </label>
+                  </div>
+                </>
+              )}
+              <div className="setting-item">
+                <label htmlFor="clockTextSize">Text Size: ({parseInt(clockTextSize)}vw)</label>
+                <input 
+                  type="range" 
+                  id="clockTextSize" 
+                  min="1" 
+                  max="30" 
+                  step="0.1" 
+                  value={parseInt(clockTextSize)} 
+                  onChange={(e) => onClockTextSizeChange(`${e.target.value}vw`)} 
+                />
+              </div>
+              <button onClick={() => setCurrentView('themes')} className="themes-button">🎨 Themes</button>
+            </div>
+          ) : (
+            <div className="settings-menu-content">
+              <h2>Themes</h2>
+              <div className="setting-item klock-mode-toggle">
+                <label htmlFor="klockMode">Klock Mode (HH:MM + Progress Bar)</label>
+                <label className="switch">
+                  <input 
+                    id="klockMode" 
+                    type="checkbox" 
+                    checked={isKlockMode} 
+                    onChange={(e) => onKlockModeChange(e.target.checked)} 
+                  />
+                  <span className="slider round"></span>
+                </label>
+              </div>
+              <div className="setting-item">
+                <label htmlFor="themeSelector">Theme</label>
+                <select id="themeSelector" value={theme} onChange={(e) => onThemeChange(e.target.value)}>
+                  <option value="default">Default</option>
+                  <option value="flip">Flip</option>
+                  <option value="flip-basic">Flip Basic</option>
+                </select>
+              </div>
+              <button onClick={() => setCurrentView('main')} className="back-button">← Back</button>
+            </div>
+          )}
+          {/* Close button is part of the draggable menu content */}
+          <button onClick={onClose} className="close-button">Close</button>
+          <div className="settings-menu-attribution">
+            Made with ❤ by Marius.Rfst
           </div>
-
-        <div className="setting-item">
-          <label htmlFor="appBackgroundColor">Background Color:</label>
-          <input 
-            type="color" 
-            id="appBackgroundColor" 
-            value={appBackgroundColor} 
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => onAppBackgroundColorChange(e.target.value)} 
-          />
         </div>
-
-        <div className="setting-item">
-          <label htmlFor="fontFamily">Clock Font:</label>
-          <select 
-            id="fontFamily" 
-            value={clockFontFamily} 
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => onClockFontFamilyChange(e.target.value)}
-          >
-            <option value="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif">System Default</option>
-            <option value="Arial, Helvetica, sans-serif">Arial</option>
-            <option value="Verdana, Geneva, sans-serif">Verdana</option>
-            <option value="'Times New Roman', Times, serif">Times New Roman</option>
-            <option value="'Courier New', Courier, monospace">Courier New</option>
-            <option value="Georgia, serif">Georgia</option>
-            <option value="'Lucida Console', Monaco, monospace">Lucida Console</option>
-            <option value="Tahoma, Geneva, sans-serif">Tahoma</option>
-            <option value="'Palatino Linotype', 'Book Antiqua', Palatino, serif">Palatino</option>
-          </select>
-        </div>
-
-        <div className="setting-item">
-          <label htmlFor="clockTextSize">Clock Text Size: ({parseInt(clockTextSize)}vw)</label>
-          <input 
-            type="range" 
-            id="clockTextSize" 
-            min="10" 
-            max="30" 
-            step="1" 
-            value={parseInt(clockTextSize)} // Extract numeric value for range input
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => onClockTextSizeChange(e.target.value + 'vw')} 
-          />
-        </div>
-
-        <div className="setting-item move-text-toggle">
-          <label htmlFor="clockMoveMode">Move Text Mode</label>
-          <label className="switch">
-            <input 
-              id="clockMoveMode" 
-              type="checkbox" 
-              checked={isClockMovementModeActive} 
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setIsClockMovementModeActive(e.target.checked)} 
-            />
-            <span className="slider round"></span>
-          </label>
-        </div>
-
-        <div className="setting-item klock-mode-toggle">
-          <label htmlFor="klockMode">Klock Mode (HH:MM + Progress Bar)</label>
-          <label className="switch">
-            <input 
-              id="klockMode" 
-              type="checkbox" 
-              checked={isKlockMode} 
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => onKlockModeChange(e.target.checked)} 
-            />
-            <span className="slider round"></span>
-          </label>
-        </div>
-        {/* Close button is part of the draggable menu content */}
-        <button onClick={onClose} className="close-button">Close</button>
-        <div className="settings-menu-attribution">
-          Made with ❤ by Marius.Rfst
-        </div>
-      </div>
       </div>
     </div>
   );

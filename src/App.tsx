@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import Clock from './components/Clock/Clock';
 import SettingsMenu from './components/SettingsMenu/SettingsMenu';
+import FlipClock from './components/FlipClock/FlipClock';
 
 function App() {
   const [showSettingsButton, setShowSettingsButton] = useState(false);
@@ -20,6 +21,7 @@ function App() {
   const [isFocusModeActive, setIsFocusModeActive] = useState<boolean>(false);
   const [focusElapsedTimeInSeconds, setFocusElapsedTimeInSeconds] = useState<number>(0);
   const [isClockMovementModeActive, setIsClockMovementModeActive] = useState<boolean>(false);
+  const [theme, setTheme] = useState<string>('default');
 
   const handleAppClick = (event: React.MouseEvent<HTMLDivElement>) => {
     const targetElement = event.target as HTMLElement;
@@ -139,17 +141,21 @@ function App() {
         '--clock-text-size': clockTextSize,
       } as React.CSSProperties}
     >
-      <Clock 
-        textColor={clockTextColor} 
-        fontFamily={clockFontFamily} 
-        textSize={clockTextSize} 
-        isKlockMode={isKlockMode} 
-        position={clockPosition} 
-        setPosition={setClockPosition}
-        isDraggable={isClockMovementModeActive} 
-        isFocusModeActive={isFocusModeActive} 
-        focusElapsedTimeInSeconds={focusElapsedTimeInSeconds} 
-      />
+            {theme.startsWith('default') ? (
+        <Clock 
+          textColor={clockTextColor} 
+          fontFamily={clockFontFamily} 
+          textSize={clockTextSize} 
+          isKlockMode={isKlockMode} 
+          position={clockPosition} 
+          setPosition={setClockPosition}
+          isDraggable={isClockMovementModeActive} 
+          isFocusModeActive={isFocusModeActive} 
+          focusElapsedTimeInSeconds={focusElapsedTimeInSeconds} 
+        />
+      ) : (
+        <FlipClock textColor={clockTextColor} theme={theme} size={clockTextSize} isFocusModeActive={isFocusModeActive} focusElapsedTimeInSeconds={focusElapsedTimeInSeconds} />
+      )}
       {(showSettingsButton || isMenuOpen) && (
         <button 
           className={`settings-button visible`}
@@ -187,8 +193,10 @@ function App() {
         onKlockModeChange={setIsKlockMode}
         menuPosition={settingsMenuPosition} // Pass position
         setMenuPosition={setSettingsMenuPosition} // Pass setter
-        isClockMovementModeActive={isClockMovementModeActive} // New prop
-        setIsClockMovementModeActive={setIsClockMovementModeActive} // New prop
+        isClockMovementModeActive={isClockMovementModeActive}
+        setIsClockMovementModeActive={setIsClockMovementModeActive}
+        theme={theme}
+        onThemeChange={setTheme}
       />
       {isKlockMode && (
         <div className="app-klock-progress-bar-container">
