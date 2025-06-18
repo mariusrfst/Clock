@@ -23,6 +23,7 @@ interface SettingsMenuProps {
 }
 
 const SettingsMenu: React.FC<SettingsMenuProps> = ({
+  // ... (keep existing props)
   isOpen,
   onClose,
   clockTextColor,
@@ -42,6 +43,7 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
   theme,
   onThemeChange,
 }) => {
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [currentView, setCurrentView] = useState<'main' | 'themes'>('main');
   const [isDragging, setIsDragging] = useState(false);
   const dragStartRef = useRef<{ x: number; y: number; initialTop: number; initialRight: number } | null>(null);
@@ -85,6 +87,40 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
       window.removeEventListener('mouseup', handleMouseUp);
     };
   }, [isDragging, setMenuPosition, menuRef]); // Added menuRef to dependencies as it's used in effect
+
+  useEffect(() => {
+    const checkFullscreenStatus = () => {
+      const isCurrentlyFullscreen = !!(document.fullscreenElement || (document as any).webkitFullscreenElement);
+      setIsFullscreen(isCurrentlyFullscreen);
+    };
+
+    checkFullscreenStatus(); // Initial check
+
+    document.addEventListener('fullscreenchange', checkFullscreenStatus);
+    document.addEventListener('webkitfullscreenchange', checkFullscreenStatus); // For Safari
+
+    return () => {
+      document.removeEventListener('fullscreenchange', checkFullscreenStatus);
+      document.removeEventListener('webkitfullscreenchange', checkFullscreenStatus);
+    };
+  }, []);
+
+  const handleToggleFullscreen = () => {
+    const element = document.documentElement as any; // Use 'any' for webkit prefixes
+    if (!isFullscreen) {
+      if (element.requestFullscreen) {
+        element.requestFullscreen();
+      } else if (element.webkitRequestFullscreen) { // Safari
+        element.webkitRequestFullscreen();
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if ((document as any).webkitExitFullscreen) { // Safari
+        (document as any).webkitExitFullscreen();
+      }
+    }
+  };
 
   if (!isOpen) {
     return null;
@@ -178,6 +214,11 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
                   value={parseInt(clockTextSize)} 
                   onChange={(e) => onClockTextSizeChange(`${e.target.value}vw`)} 
                 />
+              </div>
+              <div className="setting-item">
+                <button onClick={handleToggleFullscreen} className="fullscreen-button">
+                  {isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+                </button>
               </div>
               <button onClick={() => setCurrentView('themes')} className="themes-button">🎨 Themes</button>
             </div>
