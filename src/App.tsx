@@ -188,6 +188,7 @@ function App() {
       className="App"
       onClick={(e) => handleAppClick(e)} 
       style={{
+        backgroundColor: appBackgroundColor, // Added this line
         '--clock-text-color': clockTextColor,
         '--clock-font-family': clockFontFamily,
         '--clock-text-size': clockTextSize,
