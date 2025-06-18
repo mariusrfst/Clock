@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, Dispatch, SetStateAction } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import Clock from './components/Clock/Clock';
 import SettingsMenu from './components/SettingsMenu/SettingsMenu';
